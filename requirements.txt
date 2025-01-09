@@ -1,0 +1,28 @@
+accelerate==0.33.0
+datasets==3.0.0
+docker-pycreds==0.4.0
+evaluate==0.4.3
+habana-media-loader==1.17.0.495
+habana-pyhlml==1.17.0.495
+habana-torch-dataloader @ file:///tmp/tmp.tDUToCmVLE/habana_torch_dataloader-1.17.0.495-cp310-cp310-linux_x86_64.whl#sha256=79a0ae775144bf1bbe268cfb07195b9f632ee5e5c1ea672f8f3e1b83a09addfb
+habana-torch-plugin @ file:///tmp/tmp.tDUToCmVLE/habana_torch_plugin-1.17.0.495-cp310-cp310-linux_x86_64.whl#sha256=39b1f7138c9cc7b5607905701f696cae700241b5525fb969c62a0209a96240a5
+habana_gpu_migration @ file:///tmp/tmp.tDUToCmVLE/habana_gpu_migration-1.17.0.495-cp310-cp310-linux_x86_64.whl#sha256=1944a4e5c78af6d99ffd4cb5770e0bbebd69bd6a9a0a0eeb9a4ec18e7e747448
+habana_quantization_toolkit @ file:///tmp/tmp.tDUToCmVLE/habana_quantization_toolkit-1.17.0.495-py3-none-any.whl#sha256=0139cfa12578021a258afd60997d23645f02eaecc34d55df875d20b106bf5f9e
+huggingface-hub==0.24.5
+jiwer==3.0.4
+nltk==3.9.1
+numpy==1.23.5
+omegaconf==2.3.0
+optimum==1.22.0
+optimum-habana @ git+https://github.com/huggingface/optimum-habana.git@fc2e671b2206427691b9f7b01e9a47a75024d21a
+peft==0.11.1
+rouge_score==0.1.2
+torch @ file:///tmp/tmp.tDUToCmVLE/torch-2.3.1a0%2Bgit4989238-cp310-cp310-linux_x86_64.whl#sha256=3dcf6dbf9b3ff3dd3f7636f899b28be14000b39087b2c79077ae0f4feaeeeb48
+torch_tb_profiler @ file:///tmp/tmp.tDUToCmVLE/torch_tb_profiler-0.4.0-py3-none-any.whl#sha256=96b885b292891431b0ed66366e140aacbe3d22dfbc37e6acb1bf5c14fa85a8e4
+torchaudio @ file:///tmp/tmp.tDUToCmVLE/torchaudio-2.3.0%2B952ea74-cp310-cp310-linux_x86_64.whl#sha256=9087f7d1077320798f4e72591bfe97bdd4a1733c2b53879ed7b62b8e4101db5f
+torchdata @ file:///tmp/tmp.tDUToCmVLE/torchdata-0.7.1%2B5e6f7b7-py3-none-any.whl#sha256=640a0505bb80175c923723eb394a3a862d3342232158b5919cdc5f5129f24a54
+torchmetrics==1.4.0.post0
+torchtext @ file:///tmp/tmp.tDUToCmVLE/torchtext-0.18.0a0%2B9bed85d-cp310-cp310-linux_x86_64.whl#sha256=54b68d253aad1db529012ea4f36255b124176a7a67f49dc2c06214f7e28f3afe
+torchvision @ file:///tmp/tmp.tDUToCmVLE/torchvision-0.18.1a0%2Bfe70bc8-cp310-cp310-linux_x86_64.whl#sha256=b883404f0ad2eb6f75d90192f7de9be2d4b9cbed2c6dd15b8bf0eb218705229b
+transformers==4.43.3
+wandb==0.18.1

@@ -1,0 +1,1 @@
+PT_HPU_LAZY_MODE=0 python train.py --cfg-path configs/paper_final.yaml --options model.ckpt=pretrained_weights/checkpoint_26.pth run.evaluate=True
