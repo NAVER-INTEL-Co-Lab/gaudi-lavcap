@@ -5,6 +5,7 @@ wandb/
 .graph_dumps/
 hl-smi*.txt
 *.pt
+results/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

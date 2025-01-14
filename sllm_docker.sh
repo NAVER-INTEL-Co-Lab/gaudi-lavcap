@@ -1,7 +1,6 @@
 docker pull vault.habana.ai/gaudi-docker/1.17.0/ubuntu22.04/habanalabs/pytorch-installer-2.3.1:latest
 
-docker run -v ./dataset/tedlium:/mnt/lynx4/datasets/ltu_as/tedlium \
-	   -v ./workspace:/workspace \
+docker run -v ./workspace:/workspace \
 	   --workdir /workspace \
 	   -it --runtime=habana \
 	   -e HABANA_VISIBLE_DEVICES=all \

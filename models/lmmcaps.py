@@ -57,7 +57,7 @@ class LMMCAPS(nn.Module):
     def device(self):
         return list(self.parameters())[0].device
 
-    def maybe_autocast(self, dtype=torch.float16):
+    def maybe_autocast(self, dtype=torch.bfloat16):
         # if on cpu, don't use autocast
         # if on gpu, use autocast with dtype if provided, otherwise use torch.float16
         enable_autocast = self.device != torch.device("cpu")
@@ -190,8 +190,6 @@ class LMMCAPS(nn.Module):
         if self.enc_lora:
             logging.info("Encoder LoRA Setting...")
             self.enc_peft_config = LoraConfig(
-                # task_type=TaskType.CAUSAL_LM, # Decoder
-                # use_dora = True,
                 target_modules=["q_proj", "v_proj"],
                 inference_mode=False, 
                 r=enc_lora_rank, 
@@ -218,7 +216,7 @@ class LMMCAPS(nn.Module):
         else:
             self.llama_decoder = LlamaForCausalLM.from_pretrained(
                 llama_decoder_path,
-                torch_dtype=torch.float16,
+                torch_dtype=torch.bfloat16,
             )
         self.llama_decoder.resize_token_embeddings(len(self.llama_tokenizer))
 
@@ -229,7 +227,6 @@ class LMMCAPS(nn.Module):
         if self.dec_lora:
             logging.info("Decoder LoRA Setting...")
             self.dec_peft_config = LoraConfig(
-                # use_dora = True,
                 task_type=TaskType.CAUSAL_LM, 
                 inference_mode=False, 
                 r=dec_lora_rank, 
@@ -310,7 +307,7 @@ class LMMCAPS(nn.Module):
         self.config = self.llama_decoder.config
 
         self.generation_config = GaudiGenerationConfig(
-            static_shapes=False, ## GaudiGenerationMixin.generate에서 model_input_name 가 input_embeds면 False로 해야하는듯
+            static_shapes=False,
             max_new_tokens=generation_config.get("max_new_tokens", 200),
             num_beams=generation_config.get("num_beams", 4),
             do_sample=generation_config.get("do_sample", False),
@@ -327,7 +324,6 @@ class LMMCAPS(nn.Module):
         # clip_feat : batch x 20(frames) x embed_dim
 
         with self.maybe_autocast():
-            ###########  edited by lhk  ###########
             # Normalize the audio and visual features
             if self.av_embed_norm:
                 spec_embeds = self.ln_aud(spec_embeds)
@@ -506,7 +502,6 @@ class LMMCAPS(nn.Module):
         return av_embeds, av_atts, ot_loss
     
     def encode_feature(self, spec, clip_feat):
-        # edited by khrho
         with self.maybe_autocast():
             spec_embeds = self.audio_encoder(spec)
             av_embeds, av_atts, ot_loss = self._encode_auditory_feature(spec_embeds, clip_feat)
@@ -556,7 +551,6 @@ class LMMCAPS(nn.Module):
         else:
             return embeds, atts
     
-    # def forward(self, batch, verbose=False):
     def forward(self, **kwargs):
         spec, clip_feat = kwargs["spec"], kwargs["clip_feat"]
         av_embeds, av_atts, ot_loss = self.encode_feature(spec, clip_feat)
@@ -606,21 +600,10 @@ class LMMCAPS(nn.Module):
                 return_dict=True,
                 labels=targets,
             )
-            loss = outputs.loss + ot_loss   # edited by khrho
-
-        # if verbose:
-        #     nvocab = self.llama_decoder.config.vocab_size
-        #     results = outputs.logits[:, empty_targets.size(1) - 1: -1, :].contiguous().view(-1, nvocab).argmax(dim=-1)
-        #     labels = targets[:, empty_targets.size(1):].contiguous().view(-1)
-        #     mask = (labels != -100)
-        #     correct = (results[mask] == labels[mask]).float().sum()
-        #     total = len(labels[mask])
-
-        #     return {"loss": loss, "correct": correct, "total": total}
+            loss = outputs.loss + ot_loss 
 
         return {"loss": loss}
 
-    # def generate(self, batch, generate_cfg, prompts=None, search_param=None):
     def generate(self, **kwargs):
         generate_cfg = kwargs["generation_config"]
         spec, clip_feat = kwargs["spec"], kwargs["clip_feat"]
@@ -650,23 +633,12 @@ class LMMCAPS(nn.Module):
             attention_mask=attns,
             stopping_criteria=stopping_criteria,
             generation_config=self.generation_config,
-            # max_new_tokens=generate_cfg.get("max_new_tokens", 200),
-            # num_beams=generate_cfg.get("num_beams", 4),
-            # do_sample=generate_cfg.get("do_sample", False),
-            # min_length=generate_cfg.get("min_length", 1),
-            # temperature=generate_cfg.get("temperature", 1.0),
-            # top_p=generate_cfg.get("top_p", 0.9),
-            # repetition_penalty=generate_cfg.get("repetition_penalty", 1.0),
-            # length_penalty=generate_cfg.get("length_penalty", 1.0),
         )
-        # predicted_caption = self.llama_tokenizer.batch_decode(outputs, add_special_tokens=False)
 
         pad_num = generate_cfg.max_new_tokens - len(outputs[0])
         outputs = F.pad(outputs, (0,pad_num), 'constant', 0)
 
         return outputs
-        # return {"torch_id": batch["torch_id"],"predictions": outputs}
-        # return {"torch_id": batch["torch_id"],"predictions": predicted_caption,"logprobs": logprobs}
 
     @classmethod
     def from_config(cls, config):

@@ -21,15 +21,11 @@ from dataclasses import dataclass
 from config import Config
 import numpy as np
 import torch
-from torch.nn.utils.rnn import pad_sequence
 import transformers
 from transformers.trainer_utils import is_main_process
 from optimum.habana import GaudiConfig, GaudiSeq2SeqTrainer, GaudiSeq2SeqTrainingArguments    
 from optimum.habana.utils import set_seed
-import evaluate
-from models.sllm import SLLM, SLLMConfig
 from models import load_model
-from dataset.dataset_document import ASRDataset
 from dataset.AudioCaps import AudioCaps
 import json
 
@@ -50,37 +46,6 @@ def parse_args():
     )
 
     return parser.parse_args()
-
-@dataclass
-class DataCollatorForASR:
-    tokenizer: transformers.PreTrainedTokenizer
-    max_txt_len: int = 128
-
-    def __call__(self, samples):
-        samples_spectrogram = [s["spectrogram"] for s in samples]
-        spec_len = [len(s) for s in samples_spectrogram]
-        cat_spectrogram = pad_sequence(samples_spectrogram, batch_first=True, padding_value=0)
-
-        asr = [s["asr"] for s in samples]
-        labels = [s["labels"] for s in samples]
-
-        to_regress_tokens = self.tokenizer(
-            labels,
-            return_tensors="pt",
-            padding="longest",
-            truncation=True,
-            max_length=self.max_txt_len,
-            add_special_tokens=False
-        )
-
-        return {
-            "spectrogram": cat_spectrogram,
-            "asr": asr,
-            "task": [s["task"] for s in samples],
-            "id": [s["id"] for s in samples],
-            "labels": to_regress_tokens.input_ids,
-            "labels_attention_mask": to_regress_tokens.attention_mask,
-        }
 
 @dataclass
 class DataCollatorForCaptioning:
@@ -152,7 +117,7 @@ def main():
         num_train_epochs=run_config.optims['max_epoch'],
         learning_rate=run_config.optims['init_lr'],
         weight_decay=run_config.optims['weight_decay'],
-        bf16=False,
+        bf16=True,
         # fp16=True,
         logging_steps=10,
         optim="adamw_torch",
@@ -235,9 +200,6 @@ def main():
         for metric_name, score in coco_eval.eval.items():
             metrics[metric_name] = score
         print(metrics)
-        metrics = {
-            "eval_loss": 0.0
-        }
 
         return metrics
 
@@ -263,9 +225,14 @@ def main():
         data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
-    trainer.train()
 
-    # trainer._load_from_checkpoint(resume_from_checkpoint=model_config.resume_from)
+    if not run_config.do_eval:
+        trainer.train()
+    else:
+        trainer._load_from_checkpoint(resume_from_checkpoint=model_config.resume_from)
+        trainer.predict(test_dataset=datasets['valid'])
+
+
     
     # state_dict = torch.load(model_config.resume_from, map_location='cpu')
     # msg = trainer.model.load_state_dict(state_dict['model'], strict=False)

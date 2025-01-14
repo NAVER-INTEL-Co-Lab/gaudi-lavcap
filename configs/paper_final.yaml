@@ -4,6 +4,21 @@ model:
   freeze_enc: True
   llama_decoder_path: "/mnt/lynx4/datasets/ltu_as/tedlium/Video-LLaMA-2-7B-Finetuned/llama-2-7b-chat-hf"  
   # ckpt: "pretrained_weights/checkpoint_26.pth" # if not "", load model from ckpt for training or evaluation
+  
+  # resume_from: "results/mmcap_final_wd/checkpoint-27000"
+  # resume_from: "results/mmcap_final_wd/checkpoint-28500"
+  # resume_from: "results/mmcap_final_wd/checkpoint-30000"
+  # resume_from: "results/mmcap_final_wd/checkpoint-31500"
+  # resume_from: "results/mmcap_final_wd/checkpoint-33000"
+  # resume_from: "results/mmcap_final_wd/checkpoint-34500"
+  # resume_from: "results/mmcap_final_wd/checkpoint-36000"
+  # resume_from: "results/mmcap_final_wd/checkpoint-37500"
+  # resume_from: "results/mmcap_final_wd/checkpoint-39000"
+  # resume_from: "results/mmcap_final_wd/checkpoint-40500"
+  # resume_from: "results/mmcap_final_wd/checkpoint-42000"
+  # resume_from: "results/mmcap_final_wd/checkpoint-43500"
+  # resume_from: "results/mmcap_final_wd/checkpoint-45000"
+
 
   # encoder (CED)
   n_class: 527
@@ -83,29 +98,17 @@ datasets:
   im_res: 224
 
 run:
+  do_eval: False # if True, only evaluate model on test data
   do_debug: False
   # log & settings
   seed: 42
   # output_dir: "pretrained_weights"
-  output_dir: "/mnt/bear2/users/jongbin/results/mmcap_final_wd"
-  evaluate: False # if True, only evaluate model on test data
-  coco_evaluate: True
-  coco_freq: 1
-
-  model_save_freq: 2
-  log_freq : 10
+  output_dir: "/mnt/bear2/users/jongbin/results/mmcap_final_wd_2"
   accum_grad_iters: 1
 
   train_batch_size: 4
   eval_batch_size: 1
   num_workers: 8
-
-  device: "cuda"
-  use_distributed: True
-  amp: True
-  port: "8887"
-  world_size: 1
-  dist_url: "env://"
 
   # optimizer & scheduler
   optims:
@@ -122,14 +125,3 @@ run:
     wandb_entity: "jongbin"
     wandb_project: "audiocaps"
     wandb_name: "gaudi_final"
-
-
-# generate:
-#   max_new_tokens: 200
-#   num_beams: 4
-#   do_sample: False
-#   min_length: 1
-#   temperature: 1.0
-#   top_p: 0.9
-#   repetition_penalty: 1.0
-#   length_penalty: 1.0
