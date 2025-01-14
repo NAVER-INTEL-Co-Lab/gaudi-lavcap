@@ -4,21 +4,6 @@ model:
   freeze_enc: True
   llama_decoder_path: "/mnt/lynx4/datasets/ltu_as/tedlium/Video-LLaMA-2-7B-Finetuned/llama-2-7b-chat-hf"  
   # ckpt: "pretrained_weights/checkpoint_26.pth" # if not "", load model from ckpt for training or evaluation
-  
-  # resume_from: "results/mmcap_final_wd/checkpoint-27000"
-  # resume_from: "results/mmcap_final_wd/checkpoint-28500"
-  # resume_from: "results/mmcap_final_wd/checkpoint-30000"
-  # resume_from: "results/mmcap_final_wd/checkpoint-31500"
-  # resume_from: "results/mmcap_final_wd/checkpoint-33000"
-  # resume_from: "results/mmcap_final_wd/checkpoint-34500"
-  # resume_from: "results/mmcap_final_wd/checkpoint-36000"
-  # resume_from: "results/mmcap_final_wd/checkpoint-37500"
-  # resume_from: "results/mmcap_final_wd/checkpoint-39000"
-  # resume_from: "results/mmcap_final_wd/checkpoint-40500"
-  # resume_from: "results/mmcap_final_wd/checkpoint-42000"
-  # resume_from: "results/mmcap_final_wd/checkpoint-43500"
-  # resume_from: "results/mmcap_final_wd/checkpoint-45000"
-
 
   # encoder (CED)
   n_class: 527
