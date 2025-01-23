@@ -1,5 +1,5 @@
 # LAVCap: LLM-based Audio-Visual Captioning using Optimal Transport
-This repository provides the pytorch source code for ICASSP 2025 paper [LAVCap](https://arxiv.org), optimized for the use with Intel Gaudi-v2 accelerator.
+This repository provides the pytorch source code for ICASSP 2025 paper [LAVCap](https://www.arxiv.org/abs/2501.09291), optimized for the use with Intel Gaudi-v2 accelerator.
 
 ## Prerequisites
 ### 1. Download pre-trained LLaMA-2
